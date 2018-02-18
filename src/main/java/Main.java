@@ -3,6 +3,7 @@ import org.simplejavamail.email.Email;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.email.Recipient;
 import org.simplejavamail.mailer.Mailer;
+import org.simplejavamail.mailer.MailerBuilder;
 import org.simplejavamail.mailer.config.TransportStrategy;
 
 public class Main {
@@ -16,21 +17,17 @@ public class Main {
 
         System.out.println(recipient + " valid? " + isValid);
 
-        Email email = new EmailBuilder()
+        Email email = EmailBuilder.startingBlank()
                 .from("Bob", senderUsername)
                 .to(new Recipient(null, recipient, null))
-                .subject("hello")
-                .textHTML("world")
-                .build();
+                .withSubject("hello")
+                .withHTMLText("world")
+                .buildEmail();
 
-        Mailer mailer = new Mailer(
-                "smtp.gmail.com",
-                587,
-                senderUsername,
-                senderPassword,
-                TransportStrategy.SMTP_TLS
-        );
-
+        Mailer mailer = MailerBuilder
+                .withSMTPServer("smtp.gmail.com", 587, senderUsername, senderPassword)
+                .withTransportStrategy(TransportStrategy.SMTP_TLS)
+                .buildMailer();
 
         mailer.sendMail(email);
     }
